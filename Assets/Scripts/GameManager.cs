@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -9,6 +6,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Pacman _pacman;
     [SerializeField] private Transform _pellets;
     [SerializeField] private int _numberOfLives = 3;
+    [SerializeField] private int _ghostMultiplayer = 1;
 
     public int score { get; private set; }
     public int lives { get; private set; }
@@ -45,6 +43,8 @@ public class GameManager : MonoBehaviour
 
     private void ResetState()
     {
+        ResetGhostMultipier();
+
         for (int i = 0; i < _ghosts.Length; i++)
         {
             _ghosts[i].gameObject.SetActive(true);
@@ -75,7 +75,9 @@ public class GameManager : MonoBehaviour
 
     public void GhostEaten(Ghost ghost)
     {
-        SetScore(score + ghost.Points);
+        int points = ghost.Points * _ghostMultiplayer;
+        SetScore(score + points);
+        _ghostMultiplayer++;
     }
 
     public void PacmanEaten()
@@ -86,12 +88,48 @@ public class GameManager : MonoBehaviour
 
         if (lives > 0)
         {
-            Invoke(nameof(ResetState), 2f);
+            Invoke(nameof(ResetState), 2.0f);
         }
         else
         {
             GameOver();
         }
+    }
 
+    public void PelletEaten(Pellet pellet)
+    {
+        pellet.gameObject.SetActive(false);
+        SetScore(score + pellet.Points);
+
+        if (!HasPemainingPellets())
+        {
+            _pacman.gameObject.SetActive(false);
+            Invoke(nameof(NewRound), 2.0f);
+        }
+    }
+
+    public void PowerPelletEaten(PowerPellet powerPellet)
+    {
+
+        PelletEaten(powerPellet);
+        CancelInvoke();
+        Invoke(nameof(ResetGhostMultipier), powerPellet.Duration);
+    }
+
+    private bool HasPemainingPellets()
+    {
+        foreach (Transform pellet in _pellets)
+        {
+            if (pellet.gameObject.activeSelf)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void ResetGhostMultipier()
+    {
+        _ghostMultiplayer = 1;
     }
 }
