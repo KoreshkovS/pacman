@@ -13,6 +13,8 @@ public class Movement : MonoBehaviour
     public Vector2 direction { get; private set; }
     public Vector2 nextDirection { get; private set; }
     public Vector3 startingPosition { get; private set; }
+    public Rigidbody2D Rigidbody => _rigidbody;
+    public float SpeedMultipier { get => _speedMultipier; set => _speedMultipier = value; }
 
     private void Awake()
     {

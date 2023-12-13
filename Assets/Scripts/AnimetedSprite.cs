@@ -34,7 +34,7 @@ public class AnimetedSprite : MonoBehaviour
         }
     }
 
-    private void Restart()
+    public void Restart()
     {
         AnimationFrame = -1;
 

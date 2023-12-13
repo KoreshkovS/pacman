@@ -47,10 +47,10 @@ public class GameManager : MonoBehaviour
 
         for (int i = 0; i < _ghosts.Length; i++)
         {
-            _ghosts[i].gameObject.SetActive(true);
+            _ghosts[i].ResetState();
         }
 
-        _pacman.gameObject.SetActive(true);
+        _pacman.ResetState();
     }
 
     private void GameOver()
@@ -110,6 +110,11 @@ public class GameManager : MonoBehaviour
 
     public void PowerPelletEaten(PowerPellet powerPellet)
     {
+
+        for (int i = 0; i < _ghosts.Length; i++)
+        {
+            _ghosts[i].Frightened.Enable(powerPellet.Duration);
+        }
 
         PelletEaten(powerPellet);
         CancelInvoke();
